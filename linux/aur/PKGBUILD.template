@@ -1,0 +1,35 @@
+# Maintainer: sirrryasir
+
+pkgname=soplang
+pkgver={{VERSION}}
+pkgrel=1
+pkgdesc="The Somali Programming Language (Rust/Cranelift JIT implementation)"
+arch=('x86_64' 'aarch64')
+url="https://github.com/soplang/soplang"
+license=('MIT')
+depends=()
+makedepends=('cargo' 'rust')
+provides=('soplang')
+conflicts=('soplang-git' 'soplang-bin')
+source=("$pkgname-$pkgver.tar.gz::https://github.com/soplang/soplang/archive/refs/tags/v${pkgver}.tar.gz")
+sha256sums=('{{SHA256}}')
+
+build() {
+  cd "$pkgname-$pkgver"
+  cargo build --release --locked
+}
+
+# check() {
+#   cd "$pkgname-$pkgver"
+#   cargo test --release --locked
+# }
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 "target/release/soplang" "$pkgdir/usr/bin/soplang"
+  
+  # Install license if it exists
+  if [ -f "LICENSE" ]; then
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+  fi
+}
